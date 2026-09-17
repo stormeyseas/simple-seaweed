@@ -19,7 +19,7 @@ concurrency:
 
 env:
   # Release tag of stormeyseas/macrogrow to bundle with the app
-  MACROGROW_REF: v1.1
+  MACROGROW_REF: v1.1.1
   # This repo uses renv locally; don't let it activate on the runner
   RENV_CONFIG_AUTOLOADER_ENABLED: "FALSE"
   # shinylive uses the GitHub API to find macrogrow's wasm release assets
