@@ -1,0 +1,37 @@
+"","parameter","unit","value"
+"1","V_am","mg gDW-1 d-1",15.127236
+"2","K_am","mg m-3",1694.8107
+"3","M_am","m3 gDW-1 d-1",NA
+"4","C_am","m3 gDW-1 d-1",NA
+"5","V_ni","mg gDW-1 d-1",1.23
+"6","K_ni","mg m-3",37
+"7","M_ni","m3 gDW-1 d-1",NA
+"8","C_ni","m3 gDW-1 d-1",NA
+"9","V_ot","mg gDW-1 d-1",NA
+"10","K_ot","mg m-3",NA
+"11","M_ot","m3 gDW-1 d-1",NA
+"12","C_ot","m3 gDW-1 d-1",NA
+"13","Q_min","mg gDW-1",8.1
+"14","Q_max","mg gDW-1",34
+"15","K_c","mg gDW-1",4.2
+"16","mu","d-1",0.07
+"17","N_min","g gDW-1",0.0077
+"18","N_max","g gDW-1",0.0191
+"19","D_m","d-1",0.003
+"20","D_ve","d-1",NA
+"21","D_lo","d-1",NA
+"22","D_mi","d-1",NA
+"23","D_hi","d-1",NA
+"24","a_cs","m mg-1",1e-04
+"25","I_o","umol photons m-2 s-1",147.6
+"26","T_opt","degrees C",18.65
+"27","T_min","degrees C",-1.08
+"28","T_max","degrees C",26.66
+"29","S_opt","g L-1",33
+"30","S_min","g L-1",6
+"31","S_max","g L-1",45
+"32","h_a","d-1",0.0046
+"33","h_b","d-1",0.77
+"34","h_c","d-1",0
+"35","h_max","m",2
+"36","DWWW","gWW gDW-1",7.43
