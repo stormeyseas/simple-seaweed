@@ -3,10 +3,10 @@ library(bslib)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(units)
 library(purrr)
 
-# Files in R/ (species.R, precalc.R) are sourced automatically by Shiny.
+# Files in R/ are sourced automatically by Shiny, in alphabetical order
+# (00_conversions.R first, then precalc.R, species.R).
 # Pre-calculate optimum light and velocity once, at startup.
 species <- precalc_species(species_list)
 
@@ -95,10 +95,9 @@ server <- function(input, output, session) {
     boxes <- results() |>
       group_by(species) |>
       summarise(
-        # mg m-3 -> g L-1 (matches the biomass plot)
-        biomass_gL = last(B_ww.mg) / 1e6,
+        biomass_gL = mgm3_to_gL(last(B_ww.mg)),
         # Nf and Ns are mg N m-3; report as g N m-3
-        N_removed = (last(Nf) + last(Ns) - first(Nf) - first(Ns)) / 1000,
+        N_removed = mg_to_g(last(Nf) + last(Ns) - first(Nf) - first(Ns)),
         .groups = "drop"
       )
 
@@ -120,13 +119,7 @@ server <- function(input, output, session) {
 
   output$biomass_plot <- renderPlot({
     req(results())
-    ggplot(
-      data = results(), 
-      aes(
-        x = t, 
-        y = B_ww.mg %>% set_units("mg m-3") %>% set_units("g L-1") %>% drop_units(), 
-        colour = species)
-      ) +
+    ggplot(results(), aes(x = t, y = mgm3_to_gL(B_ww.mg), colour = species)) +
       geom_line(linewidth = 1) +
       scale_y_continuous(breaks = seq(0, 60, 5), limits = c(4.5, 35)) +
       scale_colour_manual(values = species_pal) +
@@ -143,12 +136,8 @@ server <- function(input, output, session) {
     results() |>
       select(species, t, up_Ni, up_Am) |>
       pivot_longer(-c(species, t), names_to = "form") |>
-      mutate(form = factor(form, levels = c("up_Am", "up_Ni"), labels = c("Ammonium", "Nitrate"))) %>% 
-      ggplot(aes(
-        x = t, 
-        y = value %>% set_units("mg d-1") %>% set_units("g d-1") %>% drop_units(), 
-        colour = form
-      )) +
+      mutate(form = factor(form, levels = c("up_Am", "up_Ni"), labels = c("Ammonium", "Nitrate"))) |>
+      ggplot(aes(x = t, y = mg_to_g(value), colour = form)) +
       geom_line(linewidth = 1) +
       scale_y_continuous(breaks = seq(0, 2.5, 0.5), limits = c(0,2.5)) +
       scale_colour_brewer(palette = "Set1") +

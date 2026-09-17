@@ -1,4 +1,3 @@
-library(units)
 library(macrogrow)
 
 # Species definitions ---------------------------------------------------------
@@ -9,10 +8,8 @@ library(macrogrow)
 #   days        length of the growing period (days)
 #   initials    starting state passed to grow_macroalgae()
 
-# Get starting biomass for all species
-starting_biomass <- set_units(5, "g L-1") # g/L
-starting_biomass <- set_units(starting_biomass, "mg m-3")
-starting_biomass <- drop_units(starting_biomass)
+# Starting biomass for all species: 5 g/L, expressed in mg m-3 for macrogrow
+starting_biomass <- gL_to_mgm3(5)
 
 # Get species parameters
 get_species_params <- function(file) {
@@ -82,7 +79,8 @@ species_pal <- c(
 
 # Fixed (non-user) environmental settings
 kW_default <- 0.6
-velocity_default <- set_units(10, "cm s-1") |> set_units("m s-1") |> drop_units()
+# 10 cm/s in m/s
+velocity_default <- 0.1
 
 # Reference nutrient levels (umol N L-1, converted inside run_growth()) used
 # only when pre-calculating the optimum velocity, so the result does not

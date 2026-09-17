@@ -48,3 +48,7 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 .Rproj.user
+
+# Shinylive export output (built in CI)
+_app/
+_site/
