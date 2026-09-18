@@ -5,8 +5,11 @@ library(tidyr)
 library(ggplot2)
 library(purrr)
 
-# Files in R/ are sourced automatically by Shiny, in alphabetical order
-# Pre-calculate optimum light and velocity once, at startup.
+# source("R/0_macrogrow_functions.R")
+# source("R/1_conversions.R")
+# source("R/2_precalc.R")
+# source("R/3_species.R")
+
 species <- precalc_species(species_list)
 
 # Make ggplot2 output match the app theme

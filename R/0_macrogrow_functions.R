@@ -1356,3 +1356,85 @@ Secchi_to_Kd <- function(SDD) {
 #'
 #' @return Secchi disk depth (m)
 #
+# ---- Source: C:/Users/treimer/Documents/R-temp-files/macrogrow/R/solarMJ2ppfd.R ----
+#' Solar Radiation to PPFD
+#'
+#' The following function and documentation was copied verbatim from file modules/data.atmosphere/R/metutils.R in https://github.com/PecanProject/pecan/.
+#' 
+#' There is no easy straight way to convert MJ/m2 to mu mol photons / m2 / s (PAR).
+#' Note: 1 Watt = 1J/s
+#' The above conversion is based on the following reasoning
+#' 0.12 is about how much of the total radiation is expected to ocurr during the hour of maximum insolation (it is a guesstimate)
+#' 2.07 is a coefficient which converts from MJ to mol photons (it is approximate and it is taken from ...
+#' Campbell and Norman (1998). Introduction to Environmental Biophysics. pg 151 'the energy content of solar radiation in the PAR waveband is 2.35 x 10^5 J/mol'
+#' See also the chapter radiation basics (10)
+#' Here the input is the total solar radiation so to obtain in the PAR spectrum need to multiply by 0.486
+#' This last value 0.486 is based on the approximation that PAR is 0.45-0.50 of the total radiation
+#' This means that 1e6 / (2.35e6) * 0.486 = 2.07
+#' 1e6 converts from mol to mu mol
+#' 1/3600 divides the values in hours to seconds
+#'
+#' @title MJ to PPFD
+#' @author Fernando Miguez
+#' @author David LeBauer
+#' @param solarMJ MJ per day
+#' 
+#' @return PPFD umol m-2 s-1
+#' @export
+#' 
+solarMJ2ppfd <- function(solarMJ) {
+  ppfd <- (0.12 * solarMJ) * 2.07 * 1e+06 / 3600
+  return(ppfd)
+} 
+
+# ---- Source: C:/Users/treimer/Documents/R-temp-files/macrogrow/R/T_lim.R ----
+#' Temperature limitation on growth
+#' 
+#' Given species parameters, returns the relative limitation on growth rate according to a CTMI curve:
+#' \deqn{\begin{array}[ccc] 
+#'      T_{lim} &=& \frac{(T_c-T_{max})(T_c-T_{min})^2}{(T_{opt}-T_{min})[(T_{opt}-T_{min})(T_c-T_{opt})-(T_{opt}-T_{max})(T_{opt}+T_{min}-2T_c)]}
+#' \end{array}}
+#' 
+#' @param Tc temperature to evaluate
+#' @param spec_params a vector of named numbers. Must include:
+#'  * `T_opt` the optimum temperature for macroalgae growth
+#'  * `T_min` the minimum temperature for macroalgae growth (when `T_c` < `T_min`, growth = 0)
+#'  * `T_max` the maximum temperature for macroalgae growth (when `T_c` > `T_max`, growth = 0)
+#'
+#' @return a scalar of relative temperature limitation on growth (between 0 and 1)
+#' @export
+#'
+#' @examples 
+#' my_seaweed <- c(T_opt = 20, T_min = 5, T_max = 30)
+#' 
+#' T_lim(Tc = 22, spec_params = my_seaweed)
+#' 
+#' T_range <- 1:30
+#' sapply(T_range, T_lim, spec_params = my_seaweed)
+#' 
+T_lim <- function(Tc, spec_params){
+  
+  # Check that required parameters are supplied
+  if (is.na(spec_params['T_opt'])) {abort_missing_parameter(param = "T_opt", place = "spec_params")}
+  if (is.na(spec_params['T_min'])) {abort_missing_parameter(param = "T_min", place = "spec_params")}
+  if (is.na(spec_params['T_max'])) {abort_missing_parameter(param = "T_max", place = "spec_params")}
+  
+  if (spec_params['T_opt'] < spec_params['T_min']) {
+    rlang::abort("error_bad_parameter", message = "Minimum temperature is higher than optimum temperature")
+  }
+  if (spec_params['T_opt'] > spec_params['T_max']) {
+    rlang::abort("error_bad_parameter", message = "Error: maximum temperature is lower than optimum temperature")
+  } 
+  if (spec_params['T_opt']-spec_params['T_min'] <= spec_params['T_max']-spec_params['T_opt']) {
+    rlang::abort("error_bad_parameter", message = "Species CTMI function not valid! Must satisfy T_opt-T_min > T_max-T_opt")
+  }
+  
+  if (Tc >= spec_params['T_max']) {
+    Tlim <- 0
+  } else if (Tc <= spec_params['T_min']) {
+    Tlim <- 0
+  } else {
+    Tlim <- ((Tc - spec_params['T_max'])*(Tc - spec_params['T_min'])^2)/((spec_params['T_opt'] - spec_params['T_min'])*((spec_params['T_opt'] - spec_params['T_min'])*(Tc - spec_params['T_opt']) - (spec_params['T_opt'] - spec_params['T_max'])*(spec_params['T_opt'] + spec_params['T_min'] - 2*Tc)))
+  }
+  return(unname(Tlim))
+}
