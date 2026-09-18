@@ -1,5 +1,3 @@
-library(macrogrow)
-
 # Species definitions ---------------------------------------------------------
 #
 # Each entry holds:
@@ -7,6 +5,8 @@ library(macrogrow)
 #   spec_params named numeric vector in the format expected by macrogrow
 #   days        length of the growing period (days)
 #   initials    starting state passed to grow_macroalgae()
+
+site_params_default <- c(hz = 30, d_top = 1, hc = 3, farmA = 2500)
 
 # Starting biomass for all species: 5 g/L, expressed in mg m-3 for macrogrow
 starting_biomass <- gL_to_mgm3(5)

@@ -6,7 +6,6 @@ library(ggplot2)
 library(purrr)
 
 # Files in R/ are sourced automatically by Shiny, in alphabetical order
-# (00_conversions.R first, then precalc.R, species.R).
 # Pre-calculate optimum light and velocity once, at startup.
 species <- precalc_species(species_list)
 
@@ -47,9 +46,9 @@ ui <- page_sidebar(
       tableOutput("settings"),
       card(
         card_header("Notes"),
-        tags$ul(
-          tags$li("All species started with a biomass of 3 g/L."),
-          tags$li("This simulation keeps farm parameters fixed: farm area = 2500m2, water depth = 30m, canopy width = 3m, top of canopy = 1m from the surface.")
+        shiny::tags$ul(
+          shiny::tags$li("All species started with a biomass of 3 g/L."),
+          shiny::tags$li("This simulation keeps farm parameters fixed: farm area = 2500m2, water depth = 30m, canopy width = 3m, top of canopy = 1m from the surface.")
         )
       )
     )

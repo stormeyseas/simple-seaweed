@@ -6,11 +6,9 @@
 # `nitrate` and `ammonium` are taken in umol N L-1 (user units) and converted
 # to mg N m-3 for macrogrow. The returned conc_* columns are converted back
 # to umol N L-1; uptake columns (up_Ni, up_Am) stay in mg N.
-run_growth <- function(sp, temperature, salinity, light, velocity,
-                       nitrate, ammonium, kW = kW_default,
-                       site_params = macrogrow::site_params) {
+run_growth <- function(sp, temperature, salinity, light, velocity, nitrate, ammonium, kW = kW_default, site_params = site_params_default) {
   n <- sp$days
-  macrogrow::grow_macroalgae(
+  grow_macroalgae(
     t = seq_len(n),
     temperature = rep(temperature, n),
     salinity = rep(salinity, n),
@@ -31,12 +29,17 @@ run_growth <- function(sp, temperature, salinity, light, velocity,
 }
 
 # Surface light (umol photons m-2 s-1) that maximises I_lim at the starting biomass. I_lim peaks below 1 and then declines (photoinhibition), so we maximise rather than solve for I_lim == 1.
-optimal_light <- function(sp, kW = kW_default, site_params = macrogrow::site_params, interval = c(1, 5000)) {
+optimal_light <- function(sp, kW = kW_default, site_params = site_params_default, interval = c(1, 5000)) {
   opt <- optimize(
-    \(I) macrogrow::I_lim(
-      Nf = sp$initials[["Nf"]], I = I, kW = kW,
-      spec_params = sp$spec_params, site_params = site_params
-    ),
+    function(I) {
+      I_lim(
+        Nf = sp$initials[["Nf"]],
+        kW = kW,
+        I = I,
+        spec_params = sp$spec_params,
+        site_params = site_params
+      )
+    },
     interval = interval, maximum = TRUE
   )
   c(light = opt$maximum, I_lim = opt$objective)
